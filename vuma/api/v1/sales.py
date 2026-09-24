@@ -594,18 +594,37 @@ def picking_board(company: str = None, grouping: str = "Suburb"):
                 "companies": set(),
                 "units": 0.0,
                 "lines": 0,
+                "preview": [],
             },
         )
         entry["orders"].append(order["name"])
         entry["companies"].add(order["company"])
         entry["units"] += order["units"]
         entry["lines"] += len(order["items"])
+        entry["preview"].extend([
+            {
+                "item_code": item.item_code,
+                "item_name": item.item_name or item.item_code,
+                "qty": float(item.qty or 0) - float(item.delivered_qty or 0),
+                "uom": item.uom or "Nos",
+                "warehouse": item.warehouse,
+                "company": order["company"],
+                "sales_order": order["name"],
+                "customer_name": order["customer_name"],
+                "city": order["city"],
+            }
+            for item in order["items"]
+        ])
 
     available = [
         {
             **entry,
             "companies": sorted(entry["companies"]),
             "units": round(entry["units"], 2),
+            "preview": sorted(entry["preview"], key=lambda line: (
+                line["company"], line["city"], line["sales_order"],
+                line["item_code"],
+            )),
         }
         for entry in groups.values()
     ]
