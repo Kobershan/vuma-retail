@@ -22,5 +22,18 @@
   "module": "Setup",
   "name": "Company-is_vat_registered",
   "reqd": 0
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Field",
+  "dt": "Pick List Item",
+  "fieldname": "custom_vuma_picked_check",
+  "fieldtype": "Check",
+  "insert_after": "picked_qty",
+  "label": "Vuma Picked",
+  "module": "Stock",
+  "name": "Pick List Item-custom_vuma_picked_check",
+  "read_only": 1,
+  "reqd": 0
  }
 ]

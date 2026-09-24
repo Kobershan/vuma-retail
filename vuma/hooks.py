@@ -146,7 +146,7 @@ app_license = "gpl-3.0"
 fixtures = [
     {
         "dt": "Custom Field",
-        "filters": [["dt", "in", ["Company"]]],
+        "filters": [["dt", "in", ["Company", "Pick List Item"]]],
     }
 ]
 

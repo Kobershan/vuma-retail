@@ -540,6 +540,166 @@ def picking_queue(company: str = None):
     )
 
 
+def _pick_slip_data(pick):
+    """Return the tablet/print representation of one Delivery Pick List."""
+    lines = []
+    order_names = {
+        row.sales_order
+        for row in pick.get("locations") or []
+        if row.sales_order
+    }
+    customers = {
+        row.name: row
+        for row in frappe.get_all(
+            "Sales Order",
+            filters={"name": ["in", list(order_names)]},
+            fields=["name", "customer", "customer_name"],
+        )
+    } if order_names else {}
+
+    for row in pick.get("locations") or []:
+        customer = customers.get(row.sales_order)
+
+        lines.append(
+            {
+                "name": row.name,
+                "item_code": row.item_code,
+                "item_name": row.item_name or row.item_code,
+                "qty": float(row.qty or 0),
+                "uom": row.uom or row.stock_uom or "Nos",
+                "warehouse": row.warehouse,
+                "batch_no": row.batch_no,
+                "sales_order": row.sales_order,
+                "customer": customer.customer if customer else None,
+                "customer_name": (
+                    customer.customer_name if customer else None
+                ),
+                "checked": bool(row.get("custom_vuma_picked_check")),
+            }
+        )
+
+    return {
+        "name": pick.name,
+        "company": pick.company,
+        "warehouse": pick.parent_warehouse,
+        "status": pick.status,
+        "delivery_status": pick.delivery_status,
+        "creation": str(pick.creation or ""),
+        "orders": sorted({
+            line["sales_order"] for line in lines if line["sales_order"]
+        }),
+        "lines": lines,
+        "units": round(sum(line["qty"] for line in lines), 2),
+        "checked_lines": sum(1 for line in lines if line["checked"]),
+    }
+
+
+@frappe.whitelist()
+def pick_slips(company: str = None, name: str = None):
+    """Recent Delivery Pick Lists, including the print/tablet slip lines."""
+    _require_sales()
+
+    filters = {
+        "purpose": "Delivery",
+        "docstatus": 1,
+    }
+
+    if company:
+        filters["company"] = company
+
+    if name:
+        filters["name"] = name
+
+    slips = []
+
+    for entry in frappe.get_all(
+        "Pick List",
+        filters=filters,
+        fields=["name"],
+        order_by="modified desc",
+        limit_page_length=50,
+    ):
+        if not frappe.has_permission(
+            "Pick List", "read", doc=entry.name
+        ):
+            continue
+
+        slips.append(
+            _pick_slip_data(
+                frappe.get_doc("Pick List", entry.name)
+            )
+        )
+
+    return success(data={"slips": slips})
+
+
+@frappe.whitelist()
+def set_pick_slip_line_checked(
+    pick_list: str,
+    line: str,
+    checked=0,
+):
+    """Persist a picker confirmation without changing stock or delivery data."""
+    _require_sales()
+
+    pick_list = str(pick_list or "").strip()
+    line = str(line or "").strip()
+
+    if not pick_list or not line:
+        frappe.throw(
+            "Pick list and line are required.",
+            exc=VumaPickingError,
+        )
+
+    if not frappe.db.exists(
+        "Pick List",
+        {
+            "name": pick_list,
+            "purpose": "Delivery",
+            "docstatus": 1,
+        },
+    ):
+        frappe.throw(
+            "Delivery Pick List {} not found.".format(pick_list),
+            exc=VumaPickingError,
+        )
+
+    if not frappe.has_permission(
+        "Pick List", "write", doc=pick_list
+    ):
+        frappe.throw(
+            "You do not have access to Pick List {}.".format(pick_list),
+            exc=frappe.PermissionError,
+        )
+
+    row = frappe.db.get_value(
+        "Pick List Item",
+        line,
+        ["parent", "parenttype"],
+        as_dict=True,
+    )
+
+    if not row or row.parenttype != "Pick List" or row.parent != pick_list:
+        frappe.throw(
+            "Pick List line {} was not found.".format(line),
+            exc=VumaPickingError,
+        )
+
+    frappe.db.set_value(
+        "Pick List Item",
+        line,
+        "custom_vuma_picked_check",
+        1 if str(checked).lower() in ("1", "true", "yes") else 0,
+        update_modified=True,
+    )
+
+    return success(
+        data=_pick_slip_data(
+            frappe.get_doc("Pick List", pick_list)
+        )
+    )
+
+
 @frappe.whitelist()
 def create_pick_list(
     company: str,
