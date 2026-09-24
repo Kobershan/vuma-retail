@@ -1,0 +1,25 @@
+{
+ "actions": [],
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": ["item_code", "item_name", "qty", "uom", "warehouse", "company", "sales_order", "customer", "customer_name", "city", "checked", "checked_by", "checked_at"],
+ "fields": [
+  {"fieldname": "item_code", "fieldtype": "Link", "in_list_view": 1, "label": "Item", "options": "Item", "read_only": 1},
+  {"fieldname": "item_name", "fieldtype": "Data", "in_list_view": 1, "label": "Item Name", "read_only": 1},
+  {"fieldname": "qty", "fieldtype": "Float", "in_list_view": 1, "label": "Quantity", "read_only": 1},
+  {"fieldname": "uom", "fieldtype": "Link", "label": "UOM", "options": "UOM", "read_only": 1},
+  {"fieldname": "warehouse", "fieldtype": "Link", "label": "Warehouse", "options": "Warehouse", "read_only": 1},
+  {"fieldname": "company", "fieldtype": "Link", "label": "Company", "options": "Company", "read_only": 1},
+  {"fieldname": "sales_order", "fieldtype": "Link", "label": "Sales Order", "options": "Sales Order", "read_only": 1},
+  {"fieldname": "customer", "fieldtype": "Link", "label": "Customer", "options": "Customer", "read_only": 1},
+  {"fieldname": "customer_name", "fieldtype": "Data", "label": "Customer Name", "read_only": 1},
+  {"fieldname": "city", "fieldtype": "Data", "label": "City / Suburb", "read_only": 1},
+  {"fieldname": "checked", "fieldtype": "Check", "in_list_view": 1, "label": "Picked", "read_only": 1},
+  {"fieldname": "checked_by", "fieldtype": "Link", "label": "Picked By", "options": "User", "read_only": 1},
+  {"fieldname": "checked_at", "fieldtype": "Datetime", "label": "Picked At", "read_only": 1}
+ ],
+ "istable": 1,
+ "module": "Vuma Retail",
+ "name": "Vuma Pick Slip Item"
+}

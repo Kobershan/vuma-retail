@@ -1,4 +1,5 @@
 import frappe
+from frappe.utils import now_datetime
 
 from vuma.api.v1.responses import success
 from vuma.licensing.entitlements import assert_module_enabled
@@ -466,6 +467,263 @@ def _open_pick_orders(company=None):
         order_by="transaction_date asc",
         limit_page_length=500,
     )
+
+
+PICKING_GROUPS = ("Order", "Suburb", "City")
+
+
+def _active_pick_orders():
+    rows = frappe.db.sql(
+        """select distinct i.sales_order
+        from `tabVuma Pick Slip Item` i
+        join `tabVuma Pick Slip` s on s.name = i.parent
+        where s.status in ('Available', 'In Progress')
+        and i.sales_order is not null and i.sales_order != ''""",
+        as_dict=True,
+    )
+    return {row.sales_order for row in rows}
+
+
+def _pickable_orders(company=None):
+    """Open, undelivered orders that are not assigned to an active slip."""
+    assigned = _active_pick_orders()
+    cities: dict[str, str] = {}
+    orders = []
+
+    for order in _open_pick_orders(company):
+        if order.name in assigned:
+            continue
+
+        items = frappe.db.sql(
+            """select name, item_code, item_name, qty, delivered_qty,
+            uom, warehouse from `tabSales Order Item`
+            where parent = %s order by idx asc""",
+            (order.name,),
+            as_dict=True,
+        )
+        lines = [
+            item for item in items
+            if float(item.qty or 0) - float(item.delivered_qty or 0) > 0
+        ]
+
+        if not lines:
+            continue
+
+        orders.append(
+            {
+                "name": order.name,
+                "customer": order.customer,
+                "customer_name": order.customer_name,
+                "company": order.company,
+                "city": _customer_city(order.customer, cities) or "Unspecified",
+                "transaction_date": str(order.transaction_date or ""),
+                "status": order.status,
+                "units": round(sum(
+                    float(item.qty or 0) - float(item.delivered_qty or 0)
+                    for item in lines
+                ), 2),
+                "items": lines,
+            }
+        )
+
+    return orders
+
+
+def _slip_data(slip):
+    lines = [
+        {
+            "name": row.name,
+            "item_code": row.item_code,
+            "item_name": row.item_name or row.item_code,
+            "qty": float(row.qty or 0),
+            "uom": row.uom or "Nos",
+            "warehouse": row.warehouse,
+            "company": row.company,
+            "sales_order": row.sales_order,
+            "customer": row.customer,
+            "customer_name": row.customer_name,
+            "city": row.city,
+            "checked": bool(row.checked),
+            "checked_by": row.checked_by,
+            "checked_at": str(row.checked_at or ""),
+        }
+        for row in slip.get("items") or []
+    ]
+    lines.sort(key=lambda row: (
+        row["company"] or "", row["city"] or "", row["sales_order"] or "",
+        row["item_code"] or "",
+    ))
+
+    return {
+        "name": slip.name,
+        "status": slip.status,
+        "grouping": slip.grouping,
+        "area": slip.area,
+        "company": slip.company,
+        "started_by": slip.started_by,
+        "started_at": str(slip.started_at or ""),
+        "completed_by": slip.completed_by,
+        "completed_at": str(slip.completed_at or ""),
+        "orders": sorted({row["sales_order"] for row in lines}),
+        "lines": lines,
+        "units": round(sum(row["qty"] for row in lines), 2),
+        "checked_lines": sum(1 for row in lines if row["checked"]),
+    }
+
+
+@frappe.whitelist()
+def picking_board(company: str = None, grouping: str = "Suburb"):
+    """Shared queue plus saved slips for the Vuma picking workboard."""
+    _require_sales()
+    grouping = str(grouping or "Suburb").title()
+
+    if grouping not in PICKING_GROUPS:
+        frappe.throw("Choose Order, Suburb, or City.", exc=VumaPickingError)
+
+    groups: dict[str, dict] = {}
+
+    for order in _pickable_orders(company):
+        key = order["name"] if grouping == "Order" else order["city"]
+        entry = groups.setdefault(
+            key,
+            {
+                "key": key,
+                "label": key,
+                "grouping": grouping,
+                "orders": [],
+                "companies": set(),
+                "units": 0.0,
+                "lines": 0,
+            },
+        )
+        entry["orders"].append(order["name"])
+        entry["companies"].add(order["company"])
+        entry["units"] += order["units"]
+        entry["lines"] += len(order["items"])
+
+    available = [
+        {
+            **entry,
+            "companies": sorted(entry["companies"]),
+            "units": round(entry["units"], 2),
+        }
+        for entry in groups.values()
+    ]
+    available.sort(key=lambda entry: (-entry["units"], entry["label"]))
+
+    slips = []
+    filters = {}
+    if company:
+        # Multi-company slips have an empty company field, so retain them.
+        filters["company"] = ["in", [company, ""]]
+
+    for row in frappe.get_all(
+        "Vuma Pick Slip",
+        filters=filters,
+        fields=["name"],
+        order_by="modified desc",
+        limit_page_length=100,
+    ):
+        if frappe.has_permission("Vuma Pick Slip", "read", doc=row.name):
+            slips.append(_slip_data(frappe.get_doc("Vuma Pick Slip", row.name)))
+
+    return success(data={"grouping": grouping, "available": available, "slips": slips})
+
+
+@frappe.whitelist()
+def start_picking_slip(grouping: str, orders=None):
+    """Start one shared slip from an available order or area group."""
+    _require_sales()
+    grouping = str(grouping or "").title()
+    orders = [str(name).strip() for name in frappe.parse_json(orders or []) if str(name).strip()]
+    orders = list(dict.fromkeys(orders))
+
+    if grouping not in PICKING_GROUPS or not orders:
+        frappe.throw("A grouping and at least one order are required.", exc=VumaPickingError)
+
+    pickable = {order["name"]: order for order in _pickable_orders()}
+    missing = [name for name in orders if name not in pickable]
+    if missing:
+        frappe.throw(
+            "These orders are no longer available: {}.".format(", ".join(missing)),
+            exc=VumaPickingError,
+        )
+
+    selected = [pickable[name] for name in orders]
+    areas = {order["city"] for order in selected}
+
+    if grouping == "Order" and len(selected) != 1:
+        frappe.throw("An order slip can contain one order only.", exc=VumaPickingError)
+    if grouping in ("Suburb", "City") and len(areas) != 1:
+        frappe.throw("An area slip must contain orders from one area.", exc=VumaPickingError)
+
+    companies = {order["company"] for order in selected}
+    slip = frappe.new_doc("Vuma Pick Slip")
+    slip.status = "In Progress"
+    slip.grouping = grouping
+    slip.area = selected[0]["name"] if grouping == "Order" else selected[0]["city"]
+    slip.company = next(iter(companies)) if len(companies) == 1 else ""
+    slip.started_by = frappe.session.user
+    slip.started_at = now_datetime()
+
+    for order in selected:
+        for item in order["items"]:
+            qty = float(item.qty or 0) - float(item.delivered_qty or 0)
+            slip.append("items", {
+                "item_code": item.item_code,
+                "item_name": item.item_name or item.item_code,
+                "qty": qty,
+                "uom": item.uom or "Nos",
+                "warehouse": item.warehouse,
+                "company": order["company"],
+                "sales_order": order["name"],
+                "customer": order["customer"],
+                "customer_name": order["customer_name"],
+                "city": order["city"],
+            })
+
+    slip.insert()
+    data = _slip_data(slip)
+    frappe.publish_realtime("vuma_pick_slip_update", {"slip": data}, after_commit=True)
+    return success(data=data)
+
+
+@frappe.whitelist()
+def set_picking_line_checked(slip_name: str, line: str, checked=0):
+    """Check a shared slip line and advance/complete the slip as needed."""
+    _require_sales()
+    slip_name = str(slip_name or "").strip()
+    line = str(line or "").strip()
+    slip = frappe.get_doc("Vuma Pick Slip", slip_name)
+
+    if not frappe.has_permission("Vuma Pick Slip", "write", doc=slip):
+        frappe.throw("You cannot update this picking slip.", exc=frappe.PermissionError)
+
+    row = frappe.db.get_value(
+        "Vuma Pick Slip Item", line, ["parent", "parenttype"], as_dict=True
+    )
+    if not row or row.parenttype != "Vuma Pick Slip" or row.parent != slip.name:
+        frappe.throw("Picking slip line not found.", exc=VumaPickingError)
+
+    checked = str(checked).lower() in ("1", "true", "yes")
+    frappe.db.set_value("Vuma Pick Slip Item", line, {
+        "checked": int(checked),
+        "checked_by": frappe.session.user if checked else None,
+        "checked_at": now_datetime() if checked else None,
+    }, update_modified=True)
+
+    total = frappe.db.count("Vuma Pick Slip Item", {"parent": slip.name})
+    done = frappe.db.count("Vuma Pick Slip Item", {"parent": slip.name, "checked": 1})
+    values = {"status": "Completed" if total and total == done else "In Progress"}
+    if values["status"] == "Completed":
+        values.update({"completed_by": frappe.session.user, "completed_at": now_datetime()})
+    else:
+        values.update({"completed_by": None, "completed_at": None})
+    frappe.db.set_value("Vuma Pick Slip", slip.name, values, update_modified=True)
+
+    data = _slip_data(frappe.get_doc("Vuma Pick Slip", slip.name))
+    frappe.publish_realtime("vuma_pick_slip_update", {"slip": data}, after_commit=True)
+    return success(data=data)
 
 
 @frappe.whitelist()

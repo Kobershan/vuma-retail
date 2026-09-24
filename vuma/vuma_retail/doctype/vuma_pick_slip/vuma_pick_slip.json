@@ -1,0 +1,28 @@
+{
+ "actions": [],
+ "autoname": "field:slip_id",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": ["slip_id", "status", "grouping", "area", "company", "started_by", "started_at", "completed_by", "completed_at", "items"],
+ "fields": [
+  {"fieldname": "slip_id", "fieldtype": "Data", "label": "Pick Slip ID", "read_only": 1, "reqd": 1, "unique": 1},
+  {"default": "Available", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Available\nIn Progress\nCompleted", "read_only": 1},
+  {"fieldname": "grouping", "fieldtype": "Select", "in_list_view": 1, "label": "Grouped By", "options": "Order\nSuburb\nCity", "read_only": 1},
+  {"fieldname": "area", "fieldtype": "Data", "in_list_view": 1, "label": "Order / Area", "read_only": 1},
+  {"fieldname": "company", "fieldtype": "Link", "label": "Company", "options": "Company", "read_only": 1},
+  {"fieldname": "started_by", "fieldtype": "Link", "label": "Started By", "options": "User", "read_only": 1},
+  {"fieldname": "started_at", "fieldtype": "Datetime", "label": "Started At", "read_only": 1},
+  {"fieldname": "completed_by", "fieldtype": "Link", "label": "Completed By", "options": "User", "read_only": 1},
+  {"fieldname": "completed_at", "fieldtype": "Datetime", "label": "Completed At", "read_only": 1},
+  {"fieldname": "items", "fieldtype": "Table", "label": "Items", "options": "Vuma Pick Slip Item", "read_only": 1}
+ ],
+ "module": "Vuma Retail",
+ "name": "Vuma Pick Slip",
+ "permissions": [
+  {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "System Manager", "share": 1, "write": 1},
+  {"create": 1, "print": 1, "read": 1, "role": "Sales User", "write": 1},
+  {"create": 1, "delete": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "Sales Manager", "write": 1}
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
