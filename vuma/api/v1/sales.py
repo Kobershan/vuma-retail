@@ -718,6 +718,12 @@ def set_picking_line_checked(slip_name: str, line: str, checked=0):
     if not frappe.has_permission("Vuma Pick Slip", "write", doc=slip):
         frappe.throw("You cannot update this picking slip.", exc=frappe.PermissionError)
 
+    if slip.status == "Completed":
+        frappe.throw(
+            "Completed picking slips are read-only.",
+            exc=VumaPickingError,
+        )
+
     row = frappe.db.get_value(
         "Vuma Pick Slip Item", line, ["parent", "parenttype"], as_dict=True
     )
