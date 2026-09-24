@@ -1,0 +1,242 @@
+{
+  "actions": [],
+  "allow_bulk_edit": 1,
+  "allow_rename": 1,
+  "creation": "2026-09-22 17:43:44.842153",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "installation_details_section",
+    "installation_id",
+    "customer_name",
+    "installation_name",
+    "setup_complete",
+    "business_structure_section",
+    "company_count",
+    "location_count",
+    "licensed_user_count",
+    "licensed_pos_count",
+    "licence_section",
+    "licence_status",
+    "licence_valid_from",
+    "licence_valid_until",
+    "grace_until",
+    "last_licence_check",
+    "system_section",
+    "software_version",
+    "integrity_status",
+    "last_control_check_in",
+    "user_limit",
+    "pos_limit",
+    "company_limit",
+    "location_limit",
+    "employee_limit",
+    "device_limits_section",
+    "licensed_desktop_devices",
+    "licensed_mobile_devices",
+    "licensed_pos_devices",
+    "licensed_edge_devices",
+    "licensed_server_devices"
+  ],
+  "fields": [
+    {
+      "fieldname": "installation_details_section",
+      "fieldtype": "Section Break",
+      "label": "Installation Details"
+    },
+    {
+      "fieldname": "installation_id",
+      "fieldtype": "Data",
+      "label": "Installation Id"
+    },
+    {
+      "fieldname": "customer_name",
+      "fieldtype": "Data",
+      "label": "Customer Name"
+    },
+    {
+      "fieldname": "installation_name",
+      "fieldtype": "Data",
+      "label": "Installation Name"
+    },
+    {
+      "default": "0",
+      "fieldname": "setup_complete",
+      "fieldtype": "Check",
+      "label": "Setup Complete"
+    },
+    {
+      "fieldname": "business_structure_section",
+      "fieldtype": "Section Break",
+      "label": "Business Structure"
+    },
+    {
+      "default": "1",
+      "fieldname": "company_count",
+      "fieldtype": "Int",
+      "label": "Company Count"
+    },
+    {
+      "fieldname": "location_count",
+      "fieldtype": "Int",
+      "label": "Location Count"
+    },
+    {
+      "fieldname": "licensed_user_count",
+      "fieldtype": "Int",
+      "label": "Licensed User Count"
+    },
+    {
+      "fieldname": "licensed_pos_count",
+      "fieldtype": "Int",
+      "label": "Licensed POS Count "
+    },
+    {
+      "fieldname": "licence_section",
+      "fieldtype": "Section Break",
+      "label": "Licence   "
+    },
+    {
+      "default": "Pending",
+      "fieldname": "licence_status",
+      "fieldtype": "Select",
+      "label": "Licence Status ",
+      "options": "Pending\nActive\nGrace\nExpired\nSuspended\nRevoked"
+    },
+    {
+      "fieldname": "licence_valid_from",
+      "fieldtype": "Date",
+      "label": "Licence Valid From "
+    },
+    {
+      "fieldname": "licence_valid_until",
+      "fieldtype": "Date",
+      "label": "Licence Valid Until "
+    },
+    {
+      "fieldname": "grace_until",
+      "fieldtype": "Date",
+      "label": "Grace Until  "
+    },
+    {
+      "fieldname": "last_licence_check",
+      "fieldtype": "Datetime",
+      "label": "Last Licence Check  "
+    },
+    {
+      "fieldname": "system_section",
+      "fieldtype": "Section Break",
+      "label": "System "
+    },
+    {
+      "default": "0",
+      "fieldname": "software_version",
+      "fieldtype": "Data",
+      "label": "Software Version"
+    },
+    {
+      "default": "Unknown",
+      "fieldname": "integrity_status",
+      "fieldtype": "Select",
+      "label": "Integrity Status",
+      "options": "Unknown\nValid\nWarning\nFailed"
+    },
+    {
+      "fieldname": "last_control_check_in",
+      "fieldtype": "Datetime",
+      "label": "Last Control Check In "
+    },
+    {
+      "fieldname": "user_limit",
+      "fieldtype": "Int",
+      "label": "User Limit"
+    },
+    {
+      "fieldname": "pos_limit",
+      "fieldtype": "Int",
+      "label": "POS Limit"
+    },
+    {
+      "fieldname": "company_limit",
+      "fieldtype": "Int",
+      "label": "Company Limit"
+    },
+    {
+      "fieldname": "location_limit",
+      "fieldtype": "Int",
+      "label": "Location Limit"
+    },
+    {
+      "fieldname": "employee_limit",
+      "fieldtype": "Int",
+      "label": "Employee Limit"
+    },
+    {
+      "fieldname": "device_limits_section",
+      "fieldtype": "Section Break",
+      "label": "Device Limits"
+    },
+    {
+      "fieldname": "licensed_desktop_devices",
+      "fieldtype": "Int",
+      "label": "Licensed Desktop Devices",
+      "default": "0",
+      "non_negative": 1
+    },
+    {
+      "fieldname": "licensed_mobile_devices",
+      "fieldtype": "Int",
+      "label": "Licensed Mobile Devices",
+      "default": "0",
+      "non_negative": 1
+    },
+    {
+      "fieldname": "licensed_pos_devices",
+      "fieldtype": "Int",
+      "label": "Licensed POS Devices",
+      "default": "0",
+      "non_negative": 1
+    },
+    {
+      "fieldname": "licensed_edge_devices",
+      "fieldtype": "Int",
+      "label": "Licensed Edge Devices",
+      "default": "0",
+      "non_negative": 1
+    },
+    {
+      "fieldname": "licensed_server_devices",
+      "fieldtype": "Int",
+      "label": "Licensed Server Devices",
+      "default": "0",
+      "non_negative": 1
+    }
+  ],
+  "grid_page_length": 50,
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-09-22 18:35:26.734741",
+  "modified_by": "Administrator",
+  "module": "Vuma Retail",
+  "name": "Vuma Installation",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "row_format": "Dynamic",
+  "rows_threshold_for_grid_search": 20,
+  "sort_field": "creation",
+  "sort_order": "DESC",
+  "states": []
+}

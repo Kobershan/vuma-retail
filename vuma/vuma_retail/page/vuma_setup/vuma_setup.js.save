@@ -1,0 +1,542 @@
+uma-setup"].on_page_load = function (wrapper) {
+    const page = frappe.ui.make_app_page({
+        parent: wrapper,
+        title: "Vuma Setup",
+        single_column: true,
+    });
+
+    $(`
+        <style>
+            .vuma-setup-shell {
+                max-width: 1100px;
+                margin: 32px auto;
+                padding: 0 20px 50px;
+                font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            }
+
+            .vuma-hero {
+                background:
+                    linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96));
+                border-radius: 22px;
+                padding: 34px 36px;
+                color: white;
+                box-shadow: 0 18px 50px rgba(15, 23, 42, 0.18);
+                margin-bottom: 24px;
+            }
+
+            .vuma-brand-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+            }
+
+            .vuma-brand {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+
+            .vuma-logo {
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+                background: white;
+                color: #0f172a;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 22px;
+                box-shadow: 0 8px 25px rgba(0,0,0,.16);
+            }
+
+            .vuma-brand-title {
+                font-size: 24px;
+                font-weight: 750;
+                margin: 0;
+                letter-spacing: -0.02em;
+            }
+
+            .vuma-brand-subtitle {
+                margin-top: 4px;
+                color: rgba(255,255,255,.68);
+                font-size: 13px;
+            }
+
+            .vuma-hero h1 {
+                margin: 34px 0 10px;
+                font-size: 34px;
+                font-weight: 760;
+                letter-spacing: -0.035em;
+                color: white;
+            }
+
+            .vuma-hero p {
+                margin: 0;
+                max-width: 720px;
+                color: rgba(255,255,255,.72);
+                font-size: 15px;
+                line-height: 1.65;
+            }
+
+            .vuma-progress-card {
+                background: var(--card-bg, #fff);
+                border: 1px solid var(--border-color, #e5e7eb);
+                border-radius: 18px;
+                padding: 22px 24px;
+                margin-bottom: 24px;
+                box-shadow: 0 8px 30px rgba(15, 23, 42, .05);
+            }
+
+            .vuma-stepper {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 10px;
+                position: relative;
+            }
+
+            .vuma-stepper::before {
+                content: "";
+                position: absolute;
+                top: 17px;
+                left: 5%;
+                right: 5%;
+                height: 2px;
+                background: var(--border-color, #e5e7eb);
+                z-index: 0;
+            }
+
+            .vuma-step {
+                position: relative;
+                z-index: 1;
+                text-align: center;
+                flex: 1;
+                min-width: 90px;
+            }
+
+            .vuma-step-circle {
+                width: 34px;
+                height: 34px;
+                margin: 0 auto 8px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 13px;
+                font-weight: 700;
+                border: 2px solid var(--border-color, #d1d5db);
+                background: var(--card-bg, #fff);
+                color: var(--text-muted, #64748b);
+            }
+
+            .vuma-step.active .vuma-step-circle {
+                background: #111827;
+                border-color: #111827;
+                color: #fff;
+            }
+
+            .vuma-step-label {
+                font-size: 11px;
+                color: var(--text-muted, #64748b);
+                white-space: nowrap;
+            }
+
+            .vuma-step.active .vuma-step-label {
+                color: var(--text-color, #111827);
+                font-weight: 700;
+            }
+
+            .vuma-content-card {
+                background: var(--card-bg, #fff);
+                border: 1px solid var(--border-color, #e5e7eb);
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 10px 35px rgba(15, 23, 42, .06);
+            }
+
+            .vuma-content-header {
+                padding: 28px 30px 22px;
+                border-bottom: 1px solid var(--border-color, #e5e7eb);
+            }
+
+            .vuma-eyebrow {
+                font-size: 12px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: .08em;
+                color: #64748b;
+                margin-bottom: 8px;
+            }
+
+            .vuma-content-header h2 {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 740;
+                color: var(--text-color, #111827);
+            }
+
+            .vuma-content-header p {
+                margin: 8px 0 0;
+                color: var(--text-muted, #64748b);
+                font-size: 14px;
+                line-height: 1.6;
+                max-width: 700px;
+            }
+
+            .vuma-content-body {
+                padding: 30px;
+            }
+
+            .vuma-info-grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 16px;
+            }
+
+            .vuma-info-box {
+                border: 1px solid var(--border-color, #e5e7eb);
+                border-radius: 16px;
+                padding: 20px;
+                background: var(--subtle-fg, #f8fafc);
+            }
+
+            .vuma-info-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 11px;
+                background: #111827;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                margin-bottom: 15px;
+            }
+
+            .vuma-info-box strong {
+                display: block;
+                font-size: 14px;
+                margin-bottom: 5px;
+                color: var(--text-color, #111827);
+            }
+
+            .vuma-info-box span {
+                display: block;
+                color: var(--text-muted, #64748b);
+                font-size: 12px;
+                line-height: 1.55;
+            }
+
+            .vuma-footer {
+                padding: 22px 30px;
+                border-top: 1px solid var(--border-color, #e5e7eb);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 20px;
+            }
+
+            .vuma-footer-note {
+                font-size: 12px;
+                color: var(--text-muted, #64748b);
+            }
+
+            .vuma-primary-btn {
+                appearance: none;
+                border: 0;
+                border-radius: 11px;
+                background: #111827;
+                color: white;
+                padding: 11px 20px;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: .18s ease;
+            }
+
+            .vuma-primary-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 8px 22px rgba(15, 23, 42, .18);
+            }
+
+            @media (max-width: 850px) {
+                .vuma-info-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .vuma-step-label {
+                    display: none;
+                }
+
+                .vuma-hero h1 {
+                    font-size: 28px;
+                }
+            }
+        </style>
+
+        <div class="vuma-setup-shell">
+
+            <div class="vuma-hero">
+                <div class="vuma-brand-row">
+                    <div class="vuma-brand">
+                        <div class="vuma-logo">V</div>
+                        <div>
+                            <div class="vuma-brand-title">Vuma Retail</div>
+                            <div class="vuma-brand-subtitle">Business platform configuration</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h1>Set up your Vuma installation</h1>
+
+                <p>
+                    Configure your business structure, operating locations,
+                    licensed modules and system limits. You can review everything
+                    before the installation is activated.
+                </p>
+            </div>
+
+            <div class="vuma-progress-card">
+                <div class="vuma-stepper">
+
+                    <div class="vuma-step active">
+                        <div class="vuma-step-circle">1</div>
+                        <div class="vuma-step-label">Installation</div>
+                    </div>
+
+                    <div class="vuma-step">
+                        <div class="vuma-step-circle">2</div>
+                        <div class="vuma-step-label">Companies</div>
+                    </div>
+
+                    <div class="vuma-step">
+                        <div class="vuma-step-circle">3</div>
+                        <div class="vuma-step-label">Locations</div>
+                    </div>
+
+                    <div class="vuma-step">
+                        <div class="vuma-step-circle">4</div>
+                        <div class="vuma-step-label">Mapping</div>
+                    </div>
+
+                    <div class="vuma-step">
+                        <div class="vuma-step-circle">5</div>
+                        <div class="vuma-step-label">Modules</div>
+                    </div>
+
+                    <div class="vuma-step">
+                        <div class="vuma-step-circle">6</div>
+                        <div class="vuma-step-label">Limits</div>
+                    </div>
+
+                    <div class="vuma-step">
+                        <div class="vuma-step-circle">7</div>
+                        <div class="vuma-step-label">Review</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="vuma-content-card">
+
+                <div class="vuma-content-header">
+                    <div class="vuma-eyebrow">Step 1 of 7</div>
+                    <h2>Welcome to Vuma Retail</h2>
+
+                    <p>
+                        This installation hasn't been configured yet.
+                        We'll guide you through the setup and create the business
+                        structure required for this installation.
+                    </p>
+                </div>
+
+                <div class="vuma-content-body">
+
+                    <div class="vuma-info-grid">
+
+                        <div class="vuma-info-box">
+                            <div class="vuma-info-icon">01</div>
+                            <strong>Business structure</strong>
+                            <span>
+                                Add your legal companies and define how many
+                                locations each company operates from.
+                            </span>
+                        </div>
+
+                        <div class="vuma-info-box">
+                            <div class="vuma-info-icon">02</div>
+                            <strong>Modules</strong>
+                            <span>
+                                Select the Vuma modules included in this
+                                installation's licence.
+                            </span>
+                        </div>
+
+                        <div class="vuma-info-box">
+                            <div class="vuma-info-icon">03</div>
+                            <strong>Licence limits</strong>
+                            <span>
+                                Configure users, POS terminals, employees,
+                                companies and location limits.
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="vuma-footer">
+                    <div class="vuma-footer-note">
+                        No configuration will be committed until setup is completed.
+                    </div>
+
+                    <button class="vuma-primary-btn" id="vuma-start-setup">
+                        Start Setup →
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    `).appendTo(page.body);
+
+   $("#vuma-start-setup").on("click", function () {
+    $(".vuma-content-card").html(`
+        <div class="vuma-content-header">
+            <div class="vuma-eyebrow">Step 1 of 7</div>
+            <h2>Installation Details</h2>
+            <p>
+                Enter the basic details for this Vuma installation.
+            </p>
+        </div>
+
+        <div class="vuma-content-body">
+            <div id="vuma-installation-form"></div>
+        </div>
+
+        <div class="vuma-footer">
+            <button class="btn btn-default" id="vuma-back-welcome">
+                ← Back
+            </button>
+
+            <button class="vuma-primary-btn" id="vuma-save-installation">
+                Save & Continue →
+            </button>
+        </div>
+    `);
+
+    const fields = [
+        {
+            fieldtype: "Data",
+            fieldname: "installation_name",
+            label: "Installation Name",
+            reqd: 1
+        },
+        {
+            fieldtype: "Data",
+            fieldname: "customer_name",
+            label: "Customer Name",
+            reqd: 1
+        },
+        {
+            fieldtype: "Int",
+            fieldname: "company_count",
+            label: "Number of Companies",
+            default: 1,
+            reqd: 1
+        },
+        {
+            fieldtype: "Int",
+            fieldname: "location_count",
+            label: "Number of Locations",
+            default: 1,
+            reqd: 1
+        },
+        {
+            fieldtype: "Int",
+            fieldname: "licensed_user_count",
+            label: "Licensed User Count",
+            default: 1,
+            reqd: 1
+        },
+        {
+            fieldtype: "Int",
+            fieldname: "licensed_pos_count",
+            label: "Licensed POS Count",
+            default: 0
+        }
+    ];
+
+    const field_group = new frappe.ui.FieldGroup({
+        fields: fields,
+        body: $("#vuma-installation-form")[0]
+    });
+
+    field_group.make();
+
+    $("#vuma-save-installation").on("click", async function () {
+    const values = field_group.get_values();
+
+    if (!values) {
+        return;
+    }
+
+    if (
+        values.company_count < 1 ||
+        values.location_count < 1 ||
+        values.licensed_user_count < 1 ||
+        values.licensed_pos_count < 0
+    ) {
+        frappe.msgprint(__("Please enter valid installation limits."));
+        return;
+    }
+
+    const button = $(this);
+    button.prop("disabled", true).text("Saving...");
+
+    try {
+        const doc = await frappe.db.insert({
+            doctype: "Vuma Installation",
+
+            installation_name: values.installation_name,
+            customer_name: values.customer_name,
+
+            company_count: values.company_count,
+            location_count: values.location_count,
+
+            licensed_user_count: values.licensed_user_count,
+            licensed_pos_count: values.licensed_pos_count,
+
+            setup_complete: 0,
+            licence_status: "Pending",
+            integrity_status: "Unknown"
+        });
+
+        frappe.show_alert({
+            message: __("Installation created successfully."),
+            indicator: "green"
+        });
+
+        console.log("Created Vuma Installation:", doc);
+
+        show_company_step(doc);
+    } catch (error) {
+        console.error(error);
+
+        frappe.msgprint({
+            title: __("Unable to create installation"),
+            message: error.message || __("An error occurred while saving."),
+            indicator: "red"
+        });
+
+        button.prop("disabled", false).text("Save & Continue →");
+    }
+});
+
+    $("#vuma-back-welcome").on("click", function () {
+        window.location.reload();
+    });
+});
+};

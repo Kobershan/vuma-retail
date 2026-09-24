@@ -1,0 +1,26 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Custom Field",
+  "dt": "Company",
+  "fieldname": "company_registration_no",
+  "fieldtype": "Data",
+  "insert_after": "tax_id",
+  "label": "Company Registration No",
+  "module": "Setup",
+  "name": "Company-company_registration_no",
+  "reqd": 0
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Custom Field",
+  "dt": "Company",
+  "fieldname": "is_vat_registered",
+  "fieldtype": "Check",
+  "insert_after": "company_registration_no",
+  "label": "VAT Registered?",
+  "module": "Setup",
+  "name": "Company-is_vat_registered",
+  "reqd": 0
+ }
+]

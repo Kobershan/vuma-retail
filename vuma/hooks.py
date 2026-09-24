@@ -140,8 +140,24 @@ app_license = "gpl-3.0"
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
+# Fixtures
+# --------
+
+fixtures = [
+    {
+        "dt": "Custom Field",
+        "filters": [["dt", "in", ["Company"]]],
+    }
+]
+
 # Document Events
 # ---------------
+
+doc_events = {
+    "Company": {
+        "validate": "vuma.validators.validate_company_tax",
+    }
+}
 # Hook on document methods and events
 
 # doc_events = {
@@ -262,3 +278,5 @@ app_license = "gpl-3.0"
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+extend_bootinfo = "vuma.boot.boot_session"
+app_include_js = ["/assets/vuma/js/vuma_entitlements.js"]

@@ -1,0 +1,156 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-09-22 17:51:06.085999",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "module_details_section",
+  "module_code",
+  "module_name",
+  "description",
+  "category",
+  "active",
+  "commercial_section",
+  "monthly_chargeable",
+  "requires_pos_count",
+  "requires_user_count",
+  "system_section",
+  "vuma_module",
+  "separate_app",
+  "app_name",
+  "requires_company_count",
+  "requires_location_count",
+  "requires_employee_count"
+ ],
+ "fields": [
+  {
+   "fieldname": "module_details_section",
+   "fieldtype": "Section Break",
+   "label": "Module Details"
+  },
+  {
+   "fieldname": "module_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Module Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "module_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Module Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Category",
+   "options": "Finance\nSales\nProcurement\nInventory\nRetail\nManufacturing\nServices\nProjects\nAssets\nCRM\nPeople\nQuality\nMaintenance\nDigital\nLoyalty\nMobile\nReporting\nIntegration\nCompliance\nMulti-Company",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
+  },
+  {
+   "fieldname": "commercial_section",
+   "fieldtype": "Section Break",
+   "label": "Commercial"
+  },
+  {
+   "default": "1",
+   "fieldname": "monthly_chargeable",
+   "fieldtype": "Check",
+   "label": "Monthly Chargeable"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_pos_count",
+   "fieldtype": "Check",
+   "label": "Requires POS Count"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_user_count",
+   "fieldtype": "Check",
+   "label": "Requires User Count"
+  },
+  {
+   "fieldname": "system_section",
+   "fieldtype": "Section Break",
+   "label": "System"
+  },
+  {
+   "fieldname": "vuma_module",
+   "fieldtype": "Data",
+   "label": "VUMA Module "
+  },
+  {
+   "default": "0",
+   "fieldname": "separate_app",
+   "fieldtype": "Check",
+   "label": "Separate App"
+  },
+  {
+   "fieldname": "app_name",
+   "fieldtype": "Data",
+   "label": "App Name  "
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_company_count",
+   "fieldtype": "Check",
+   "label": "Requires Company Count"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_location_count",
+   "fieldtype": "Check",
+   "label": "Requires Location Count"
+  },
+  {
+   "default": "0",
+   "fieldname": "requires_employee_count",
+   "fieldtype": "Check",
+   "label": "Requires Employee Count"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-22 18:34:17.567824",
+ "modified_by": "Administrator",
+ "module": "Vuma Retail",
+ "name": "Vuma Module",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

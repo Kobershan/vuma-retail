@@ -1,0 +1,156 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:build_id",
+  "creation": "2026-09-23 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "build_details_section",
+    "build_id",
+    "application",
+    "platform",
+    "version",
+    "release_channel",
+    "status_section",
+    "active",
+    "blocked",
+    "minimum_server_version",
+    "published_at",
+    "security_section",
+    "build_hash",
+    "signature",
+    "distribution_section",
+    "download_url",
+    "notes"
+  ],
+  "fields": [
+    {
+      "fieldname": "build_details_section",
+      "fieldtype": "Section Break",
+      "label": "Build Details"
+    },
+    {
+      "fieldname": "build_id",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Build ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "application",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Application",
+      "options": "Vuma Desktop\nVuma Mobile\nVuma POS\nVuma Edge\nVuma Server",
+      "reqd": 1
+    },
+    {
+      "fieldname": "platform",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Platform",
+      "options": "Windows\nmacOS\nAndroid\niOS\nLinux\nWeb",
+      "reqd": 1
+    },
+    {
+      "fieldname": "version",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Version",
+      "reqd": 1
+    },
+    {
+      "default": "Stable",
+      "fieldname": "release_channel",
+      "fieldtype": "Select",
+      "label": "Release Channel",
+      "options": "Development\nBeta\nStable\nLTS",
+      "reqd": 1
+    },
+    {
+      "fieldname": "status_section",
+      "fieldtype": "Section Break",
+      "label": "Status"
+    },
+    {
+      "default": "1",
+      "fieldname": "active",
+      "fieldtype": "Check",
+      "in_list_view": 1,
+      "label": "Active"
+    },
+    {
+      "default": "0",
+      "fieldname": "blocked",
+      "fieldtype": "Check",
+      "label": "Blocked"
+    },
+    {
+      "fieldname": "minimum_server_version",
+      "fieldtype": "Data",
+      "label": "Minimum Server Version"
+    },
+    {
+      "fieldname": "published_at",
+      "fieldtype": "Datetime",
+      "label": "Published At"
+    },
+    {
+      "fieldname": "security_section",
+      "fieldtype": "Section Break",
+      "label": "Build Security"
+    },
+    {
+      "fieldname": "build_hash",
+      "fieldtype": "Small Text",
+      "label": "Build Hash"
+    },
+    {
+      "fieldname": "signature",
+      "fieldtype": "Long Text",
+      "label": "Build Signature"
+    },
+    {
+      "fieldname": "distribution_section",
+      "fieldtype": "Section Break",
+      "label": "Distribution"
+    },
+    {
+      "fieldname": "download_url",
+      "fieldtype": "Data",
+      "label": "Download URL"
+    },
+    {
+      "fieldname": "notes",
+      "fieldtype": "Small Text",
+      "label": "Notes"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-09-23 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Vuma Retail",
+  "name": "Vuma Build",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

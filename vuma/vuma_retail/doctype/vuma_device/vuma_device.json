@@ -1,0 +1,231 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:device_id",
+  "creation": "2026-09-23 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "device_identity_section",
+    "device_id",
+    "installation",
+    "build",
+    "device_type",
+    "platform",
+    "status",
+    "device_details_section",
+    "device_name",
+    "os_version",
+    "app_version",
+    "assigned_user",
+    "security_section",
+    "public_key",
+    "key_algorithm",
+    "public_key_fingerprint",
+    "registration_section",
+    "registered_at",
+    "last_seen_at",
+    "last_ip",
+    "licensing_section",
+    "consumes_licence_slot",
+    "offline_allowed",
+    "revocation_section",
+    "revoked_at",
+    "revoked_by",
+    "revocation_reason"
+  ],
+  "fields": [
+    {
+      "fieldname": "device_identity_section",
+      "fieldtype": "Section Break",
+      "label": "Device Identity"
+    },
+    {
+      "fieldname": "device_id",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "label": "Device ID",
+      "reqd": 1,
+      "unique": 1
+    },
+    {
+      "fieldname": "installation",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Installation",
+      "options": "Vuma Installation",
+      "reqd": 1
+    },
+    {
+      "fieldname": "build",
+      "fieldtype": "Link",
+      "label": "Build",
+      "options": "Vuma Build",
+      "reqd": 1
+    },
+    {
+      "fieldname": "device_type",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Device Type",
+      "options": "Desktop\nMobile\nPOS\nEdge\nServer",
+      "reqd": 1
+    },
+    {
+      "fieldname": "platform",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Platform",
+      "options": "Windows\nmacOS\nAndroid\niOS\nLinux",
+      "reqd": 1
+    },
+    {
+      "default": "Pending",
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Status",
+      "options": "Pending\nActive\nSuspended\nRevoked",
+      "reqd": 1
+    },
+    {
+      "fieldname": "device_details_section",
+      "fieldtype": "Section Break",
+      "label": "Device Details"
+    },
+    {
+      "fieldname": "device_name",
+      "fieldtype": "Data",
+      "label": "Device Name"
+    },
+    {
+      "fieldname": "os_version",
+      "fieldtype": "Data",
+      "label": "OS Version"
+    },
+    {
+      "fieldname": "app_version",
+      "fieldtype": "Data",
+      "label": "App Version"
+    },
+    {
+      "fieldname": "assigned_user",
+      "fieldtype": "Link",
+      "label": "Assigned User",
+      "options": "User"
+    },
+    {
+      "fieldname": "security_section",
+      "fieldtype": "Section Break",
+      "label": "Cryptographic Identity"
+    },
+    {
+      "fieldname": "public_key",
+      "fieldtype": "Long Text",
+      "label": "Public Key",
+      "reqd": 1
+    },
+    {
+      "default": "Ed25519",
+      "fieldname": "key_algorithm",
+      "fieldtype": "Select",
+      "label": "Key Algorithm",
+      "options": "Ed25519",
+      "reqd": 1
+    },
+    {
+      "fieldname": "public_key_fingerprint",
+      "fieldtype": "Data",
+      "label": "Public Key Fingerprint",
+      "read_only": 1
+    },
+    {
+      "fieldname": "registration_section",
+      "fieldtype": "Section Break",
+      "label": "Registration"
+    },
+    {
+      "fieldname": "registered_at",
+      "fieldtype": "Datetime",
+      "label": "Registered At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "last_seen_at",
+      "fieldtype": "Datetime",
+      "label": "Last Seen At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "last_ip",
+      "fieldtype": "Data",
+      "label": "Last IP",
+      "read_only": 1
+    },
+    {
+      "fieldname": "licensing_section",
+      "fieldtype": "Section Break",
+      "label": "Licensing"
+    },
+    {
+      "default": "1",
+      "fieldname": "consumes_licence_slot",
+      "fieldtype": "Check",
+      "label": "Consumes Licence Slot"
+    },
+    {
+      "default": "0",
+      "fieldname": "offline_allowed",
+      "fieldtype": "Check",
+      "label": "Offline Allowed"
+    },
+    {
+      "fieldname": "revocation_section",
+      "fieldtype": "Section Break",
+      "label": "Revocation"
+    },
+    {
+      "fieldname": "revoked_at",
+      "fieldtype": "Datetime",
+      "label": "Revoked At",
+      "read_only": 1
+    },
+    {
+      "fieldname": "revoked_by",
+      "fieldtype": "Link",
+      "label": "Revoked By",
+      "options": "User",
+      "read_only": 1
+    },
+    {
+      "fieldname": "revocation_reason",
+      "fieldtype": "Small Text",
+      "label": "Revocation Reason"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-09-23 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Vuma Retail",
+  "name": "Vuma Device",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}
